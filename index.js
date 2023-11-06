@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -27,6 +27,39 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const jobCollection = client.db('khujodevelopers').collection('jobs');
+    const applyCollection = client.db('khujodevelopers').collection('applications');
+
+    // get all result
+    app.get('/jobs', async (req, res) => {
+      const cursor = jobCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+    // get job details
+    app.get('/jobs/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await jobCollection.findOne(query);
+      res.send(result);
+    })
+
+    // submit applications
+    app.post('/applications', async (req, res) => {
+      const application = req.body;
+      const result = await applyCollection.insertOne(application);
+      res.send(result);
+    })
+
+    // get applied jobs
+    app.get('/applications', async (req, res) => {
+      const cursor = applyCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -38,10 +71,10 @@ async function run() {
 run().catch(console.dir);
 
 
-app.get('/', (req,res) => {
-    res.send('hehhe boiiiii')
+app.get('/', (req, res) => {
+  res.send('hehhe boiiiii')
 })
 
 app.listen(port, () => {
-    console.log(`server running ${port}`)
+  console.log(`server running ${port}`)
 })
