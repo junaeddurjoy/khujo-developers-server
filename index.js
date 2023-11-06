@@ -60,8 +60,20 @@ async function run() {
       res.send(result);
     })
 
+    // add jobs
+    app.post('/jobs', async (req, res) => {
+      const newJob = req.body;
+      const result = await jobCollection.insertOne(newJob);
+      res.send(result);
+    })
+    app.get('/jobs', async (req, res) => {
+      const cursor = cartCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
     // delete applications
-    app.delete('/applications/:id', async(req, res) => {
+    app.delete('/applications/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }
       const result = await applyCollection.deleteOne(query);
@@ -71,14 +83,14 @@ async function run() {
     // update my applications
     app.get('/applications/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const result = await applyCollection.findOne(query);
       res.send(result);
     })
-    app.put('/applications/:id', async(req,res) => {
+    app.put('/applications/:id', async (req, res) => {
       const id = req.params.id;
-      const filter = {_id: new ObjectId(id)}
-      const options = {upsert: true};
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true };
       const updatedApply = req.body;
       const apply = {
         $set: {
