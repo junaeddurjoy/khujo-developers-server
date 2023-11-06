@@ -60,6 +60,46 @@ async function run() {
       res.send(result);
     })
 
+    // delete applications
+    app.delete('/applications/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await applyCollection.deleteOne(query);
+      res.send(result)
+    });
+
+    // update my applications
+    app.get('/applications/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await applyCollection.findOne(query);
+      res.send(result);
+    })
+    app.put('/applications/:id', async(req,res) => {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const options = {upsert: true};
+      const updatedApply = req.body;
+      const apply = {
+        $set: {
+          recruiter_email: updatedApply.recruiter_email,
+          recruiter_name: updatedApply.recruiter_name,
+          applicant_email: updatedApply.applicant_email,
+          applicant_name: updatedApply.applicant_name,
+          job_title: updatedApply.job_title,
+          category: updatedApply.category,
+          salary: updatedApply.salary,
+          description: updatedApply.description,
+          post_date: updatedApply.post_date,
+          deadline: updatedApply.deadline,
+          applicants: updatedApply.applicants
+        }
+      }
+      const result = await applyCollection.updateOne(filter, apply, options);
+      console.log(result)
+      res.send(result);
+    })
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
