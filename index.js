@@ -51,6 +51,7 @@ async function run() {
       const application = req.body;
       const result = await applyCollection.insertOne(application);
       res.send(result);
+      console.log(result)
     })
 
     // get applied jobs
@@ -106,7 +107,6 @@ async function run() {
         }
       }
       const result = await jobCollection.updateOne(filter, apply, options);
-      console.log(result)
       res.send(result);
     })
 
