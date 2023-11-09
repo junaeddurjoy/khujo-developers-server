@@ -4,10 +4,19 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
-
+// const corsOptions = {
+//   origin: ['https://khujo-developers.web.app','http://localhost:5173'],
+//   credentials: true,
+//   optionSuccessStatus: 200,
+// }
+// app.use(cors(corsOptions))
 // middleware
-app.use(cors());
+app.use(cors({
+  origin: ["https://khujo-developers.web.app","http://localhost:5173"],
+  credentials: true
+}));
 app.use(express.json());
+// app.use(cors());
 
 // mongo default
 
